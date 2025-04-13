@@ -93,10 +93,19 @@ export default function Home() {
     }
 
     try {
+      // Check balance first
+      const balance = await connection.getBalance(publicKey);
+      if (balance < web3.LAMPORTS_PER_SOL * 0.001) {
+        alert(
+          "Not enough SOL to pay for transaction fees. Please add funds to your wallet."
+        );
+        return;
+      }
+
       const buffer = review.serialize();
       const transaction = new web3.Transaction();
 
-      const [pda] = await web3.PublicKey.findProgramAddressSync(
+      const [pda] = web3.PublicKey.findProgramAddressSync(
         [publicKey.toBuffer(), Buffer.from(review.fromInstitution)],
         new web3.PublicKey(REVIEW_PROGRAM_ID)
       );
@@ -125,22 +134,19 @@ export default function Home() {
 
       transaction.add(instruction);
 
+      // Add these important properties
+      transaction.recentBlockhash = (
+        await connection.getLatestBlockhash()
+      ).blockhash;
+      transaction.feePayer = publicKey;
+
+      console.log("Sending transaction...");
       const tx = await sendTransaction(transaction, connection);
-      setTxid(
-        `Transaction submitted: https://explorer.solana.com/tx/${tx}?cluster=devnet`
-      );
-      setShowSuccess(true);
+      console.log("Transaction sent:", tx);
 
-      // Add the new review to the reviews list
-      setReviews((prevReviews) => [...prevReviews, review]);
-
-      // Reset the form
-      setTimeout(() => {
-        setShowForm(false);
-        setActiveSection("reviews");
-      }, 3000);
+      // ...rest of your success handling code
     } catch (e) {
-      console.error(e);
+      console.error("Transaction error details:", e);
       alert(
         "Error submitting transaction: " +
           (e instanceof Error ? e.message : JSON.stringify(e))
@@ -177,8 +183,8 @@ export default function Home() {
                   Veritas Vitae
                 </div>
               </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
+              <div className="hidden md:flex items-center">
+                <div className="flex items-baseline space-x-4">
                   <button
                     onClick={() => scrollToSection("home")}
                     className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -223,7 +229,13 @@ export default function Home() {
                     Add Review
                   </button>
                 </div>
+
+                {/* Add Wallet Button */}
+                <div className="ml-4 border-l border-gray-300 dark:border-gray-700 pl-4">
+                  <AppBar />
+                </div>
               </div>
+
               <div className="md:hidden">
                 <AppBar />
               </div>
