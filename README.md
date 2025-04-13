@@ -2,14 +2,6 @@
 
 Welcome to the **Veritas Vitae** project repository! This decentralized application (DApp) leverages blockchain technology on the Solana network to maintain a **life ledger** of an individual’s educational and professional journey, from the moment they start schooling until retirement.
 
-**Author**: [Shreyas Prabhakar](https://github.com/shrprabh)  
-**Email**: [pshreyasgowda1997@gmail.com](mailto:pshreyasgowda1997@gmail.com)  
-**LinkedIn**: [https://www.linkedin.com/in/shreyasprabhakar/](https://www.linkedin.com/in/shreyasprabhakar/)  
-**GitHub**: [www.github.com/shrprabh](https://github.com/shrprabh)  
-**X**: [@Shreyasprabhak1](https://twitter.com/Shreyasprabhak1)
-
-**Repository Link**: [https://github.com/shrpabh/veritas-vitae.git](https://github.com/shrpabh/veritas-vitae.git)
-
 ---
 
 ## Table of Contents
@@ -201,4 +193,12 @@ This project is licensed under the [MIT License](LICENSE).
 ## Acknowledgements
 
 We would like to express our sincere gratitude to the **Web 3 Acceleration Association (WAA)** and the **Solana Blockchain Community** for their invaluable support and resources in making this project possible.
-```
+---
+### Contribution and Author
+**Author**: [Shreyas Prabhakar](https://github.com/shrprabh)  
+**Email**: [pshreyasgowda1997@gmail.com](mailto:pshreyasgowda1997@gmail.com)  
+**LinkedIn**: [https://www.linkedin.com/in/shreyasprabhakar/](https://www.linkedin.com/in/shreyasprabhakar/)  
+**GitHub**: [www.github.com/shrprabh](https://github.com/shrprabh)  
+**X**: [@Shreyasprabhak1](https://twitter.com/Shreyasprabhak1)
+
+**Repository Link**: [https://github.com/shrpabh/veritas-vitae.git](https://github.com/shrpabh/veritas-vitae.git)
