@@ -93,29 +93,22 @@ export default function Home() {
     }
 
     try {
-      // Check balance first
-      const balance = await connection.getBalance(publicKey);
-      if (balance < web3.LAMPORTS_PER_SOL * 0.001) {
-        alert(
-          "Not enough SOL to pay for transaction fees. Please add funds to your wallet."
-        );
-        return;
-      }
-
       const buffer = review.serialize();
       const transaction = new web3.Transaction();
 
+      // Make sure we're using Sync correctly without await
       const [pda] = web3.PublicKey.findProgramAddressSync(
         [publicKey.toBuffer(), Buffer.from(review.fromInstitution)],
         new web3.PublicKey(REVIEW_PROGRAM_ID)
       );
 
+      // Fix the instruction account list
       const instruction = new web3.TransactionInstruction({
         keys: [
           {
             pubkey: publicKey,
             isSigner: true,
-            isWritable: false,
+            isWritable: true, // Keep as true to pay for rent
           },
           {
             pubkey: pda,
@@ -125,32 +118,52 @@ export default function Home() {
           {
             pubkey: web3.SystemProgram.programId,
             isSigner: false,
-            isWritable: false,
+            isWritable: false, // CHANGE: This should be false, not true
           },
         ],
         data: buffer,
-        programId: new web3.PublicKey(REVIEW_PROGRAM_ID),
+        programId: new web3.PublicKey(REVIEW_PROGRAM_ID), // Verify this is correct
       });
+
+      // Log the program ID being used to verify it's correct
+      console.log("Using program ID:", REVIEW_PROGRAM_ID);
+      console.log("SystemProgram ID:", web3.SystemProgram.programId.toString());
 
       transaction.add(instruction);
 
-      // Add these important properties
+      // Keep these as they're fine
       transaction.recentBlockhash = (
         await connection.getLatestBlockhash()
       ).blockhash;
       transaction.feePayer = publicKey;
 
+      console.log("Sending transaction for PDA:", pda.toString());
+      console.log("Connected wallet:", publicKey.toString());
       console.log("Sending transaction...");
+
       const tx = await sendTransaction(transaction, connection);
       console.log("Transaction sent:", tx);
 
-      // ...rest of your success handling code
-    } catch (e) {
-      console.error("Transaction error details:", e);
-      alert(
-        "Error submitting transaction: " +
-          (e instanceof Error ? e.message : JSON.stringify(e))
+      setTxid(
+        `Transaction submitted: https://explorer.solana.com/tx/${tx}?cluster=devnet`
       );
+      setShowSuccess(true);
+
+      // Refresh reviews after successful submission
+      setTimeout(async () => {
+        try {
+          const fetchedReviews = await fetchReviews(
+            REVIEW_PROGRAM_ID,
+            connection
+          );
+          setReviews(fetchedReviews || []);
+        } catch (error) {
+          console.error("Error refreshing reviews:", error);
+        }
+      }, 2000);
+    } catch (e) {
+      console.error(e);
+      alert(JSON.stringify(e));
     }
   };
 
