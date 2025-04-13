@@ -39,5 +39,5 @@ _Information about the Veritas Vitae project, explaining how blockchain is used 
 
 ### Info Page
 
-![Info](./public/infopage.png)
+![Info](./public/Infopage.png)
 _Form interface for submitting new institutional reviews to the blockchain._
